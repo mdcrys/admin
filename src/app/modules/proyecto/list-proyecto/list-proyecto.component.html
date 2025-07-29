@@ -1,0 +1,92 @@
+<div class="card">
+  <!--begin::Card header-->
+  <div class="card-header border-0 pt-6">
+    <div class="card-title">
+      <!--begin::Search-->
+      <div class="d-flex align-items-center position-relative my-1">
+        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+          <span class="path1"></span><span class="path2"></span>
+        </i>
+        <input
+          type="text"
+          [(ngModel)]="search"
+          (keyup.enter)="listProyectos()"
+          name="search"
+          class="form-control form-control-solid w-250px ps-12"
+          placeholder="Buscar Proyecto"
+        />
+      </div>
+      <!--end::Search-->
+    </div>
+
+    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+
+    <!--begin::Card toolbar-->
+    <div class="card-toolbar">
+      <button type="button" class="btn btn-primary" (click)="createProyecto()">+ Agregar Proyecto</button>
+    </div>
+    <!--end::Card toolbar-->
+  </div>
+  <!--end::Card header-->
+
+  <!--begin::Card body-->
+  <div class="card-body pt-4">
+    <div class="row">
+      <ng-container *ngFor="let PROYECTO of PROYECTOS">
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+              <!-- Nombre centrado y más grande -->
+              <h4 class="card-title fw-bold text-dark mb-3 fs-2">{{ PROYECTO.nombre }}</h4>
+
+
+              <!-- ID Empresa oculto pero presente -->
+              <input type="hidden" [value]="PROYECTO.id_empresa">
+
+              <!-- Eliminamos empresa visible -->
+              <!-- <p class="mb-1"><strong>Empresa:</strong> {{ PROYECTO.empresa }}</p> -->
+
+              <p class="mb-1"><strong>Fecha Registro:</strong> {{ PROYECTO.created_at | date:'dd/MM/yyyy' }}</p>
+
+              <p>
+                <strong>Estado:</strong>
+                <span class="badge badge-light-success" *ngIf="PROYECTO.estado == 1">Activo</span>
+                <span class="badge badge-light-danger" *ngIf="PROYECTO.estado == 2">Inactivo</span>
+              </p>
+            </div>
+
+            <div class="card-footer d-flex justify-content-between gap-2">
+              <div>
+                <button class="btn btn-sm btn-light-primary" (click)="editProyecto(PROYECTO)">
+                <i class="ki-duotone ki-pencil"></i> Editar
+              </button>
+              <button class="btn btn-sm btn-light-danger" (click)="deleteProyecto(PROYECTO)">
+                <i class="ki-duotone ki-trash"></i> Eliminar
+              </button>
+              </div>
+
+              <!-- Botón flecha derecha -->
+              <button 
+                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" 
+                title="Ver detalle del proyecto"
+                (click)="verModuloProyecto(PROYECTO.id)">
+                <i class="fas fa-arrow-right fs-2"></i>
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <ngb-pagination
+      [collectionSize]="totalPages"
+      [(page)]="currentPage"
+      [pageSize]="25"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
+  </div>
+  <!--end::Card body-->
+</div>

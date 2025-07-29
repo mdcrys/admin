@@ -1,0 +1,230 @@
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Agregar Empresa</h2>
+        <!--end::Modal title-->
+        <!--begin::Close-->
+        <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+            <span class="svg-icon svg-icon-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                    <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+                </svg>
+            </span>
+            <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+
+    <!--begin::Modal body-->
+    <div class="modal-body scroll-y mx-5 my-7">
+        <!--begin::Form-->
+        <form id="kt_modal_add_empresa_form" class="form" action="#">
+            <div class="card p-5">
+                <div class="row">
+
+                <!-- Columna Izquierda -->
+                <div class="col-md-6">
+                    <!-- Logo -->
+                    <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Logo de la empresa:</label>
+                    <div class="custom-file mb-2">
+                        <input
+                        type="file"
+                        class="custom-file-input"
+                        id="customFile"
+                        accept=".jpeg, .bmp, .jpg, .png, .gif, .webp"
+                        (change)="processFile($event)"
+                        />
+                        <label class="custom-file-label" for="customFile">Seleccionar archivo</label>
+                    </div>
+                    <div *ngIf="LOGO_PREVISUALIZA">
+                        <img [src]="LOGO_PREVISUALIZA" style="height: 100px;" alt="Vista previa del logo" />
+                    </div>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Nombre de la empresa:</label>
+                    <input
+                        type="text"
+                        name="nombre"
+                        class="form-control form-control-solid"
+                        placeholder="Nombre de la empresa"
+                        [(ngModel)]="nombre"
+                    />
+                    </div>
+
+                    <!-- RUC -->
+                    <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">RUC:</label>
+                    <input
+                        type="text"
+                        name="ruc"
+                        class="form-control form-control-solid"
+                        placeholder="RUC"
+                        [(ngModel)]="ruc"
+                    />
+                    </div>
+                </div>
+
+                <!-- Columna Derecha -->
+                <div class="col-md-6">
+                    <!-- Correo -->
+                    <div class="fv-row mb-4">
+                    <label class="fw-bold fs-6 mb-2">Correo:</label>
+                    <input
+                        type="email"
+                        name="correo"
+                        class="form-control form-control-solid"
+                        placeholder="Correo"
+                        [(ngModel)]="correo"
+                    />
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="fv-row mb-4">
+                    <label class="fw-bold fs-6 mb-2">Teléfono:</label>
+                    <input
+                        type="text"
+                        name="telefono"
+                        class="form-control form-control-solid"
+                        placeholder="Teléfono"
+                        [(ngModel)]="telefono"
+                    />
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="fv-row mb-4">
+                    <label class="fw-bold fs-6 mb-2">Dirección:</label>
+                    <input
+                        type="text"
+                        name="direccion"
+                        class="form-control form-control-solid"
+                        placeholder="Dirección"
+                        [(ngModel)]="direccion"
+                    />
+                    </div>
+                </div>
+
+                </div>
+            </div>
+            <!-- Línea separadora -->
+            <hr class="my-10 border border-primary border-2 opacity-50" />
+
+            <!-- Título -->
+            <h4 class="fw-bolder mb-5 text-center text-primary">Datos para el Administrador de la Empresa</h4>
+
+            <!-- Card -->
+            <div class="card p-5">
+            <div class="row">
+                <!-- Columna Izquierda -->
+                <div class="col-md-6">
+                <!-- Nombre -->
+                <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Nombre:</label>
+                    <input
+                    type="text"
+                    name="admin_nombre"
+                    class="form-control form-control-solid"
+                    placeholder="Nombre"
+                    [(ngModel)]="admin_nombre"
+                    />
+                </div>
+
+                <!-- Apellido -->
+                <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Apellido:</label>
+                    <input
+                    type="text"
+                    name="admin_apellido"
+                    class="form-control form-control-solid"
+                    placeholder="Apellido"
+                    [(ngModel)]="admin_apellido"
+                    />
+                </div>
+                </div>
+
+                <!-- Columna Derecha -->
+                <div class="col-md-6">
+                <!-- Correo -->
+                <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Correo electrónico:</label>
+                    <input
+                    type="email"
+                    name="admin_correo"
+                    class="form-control form-control-solid"
+                    placeholder="Correo electrónico"
+                    [(ngModel)]="admin_correo"
+                    />
+                </div>
+
+                <!-- Contraseña -->
+                <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Contraseña:</label>
+                    <input
+                    type="password"
+                    name="admin_password"
+                    class="form-control form-control-solid"
+                    placeholder="Contraseña"
+                    [(ngModel)]="admin_password"
+                    />
+                </div>
+
+                <!-- Confirmar contraseña -->
+                <div class="fv-row mb-4">
+                    <label class="required fw-bold fs-6 mb-2">Confirmar contraseña:</label>
+                    <input
+                    type="password"
+                    name="admin_password_confirm"
+                    class="form-control form-control-solid"
+                    placeholder="Confirmar contraseña"
+                    [(ngModel)]="admin_password_confirm"
+                    />
+                </div>
+                </div>
+            </div>
+            </div>
+            <!-- Línea separadora -->
+            <hr class="my-10 border border-primary border-2 opacity-50" />
+
+            <!-- Título -->
+            <h4 class="fw-bolder mb-5 text-center text-primary">Configurar Correo de salida de Empresa</h4>
+
+            <!-- Línea separadora -->
+            <hr class="my-10 border border-primary border-2 opacity-50" />
+
+            <!-- Título -->
+            <h4 class="fw-bolder mb-5 text-center text-primary">Asignar Permisos</h4>
+            
+
+
+
+            <!-- Botones -->
+            <div class="text-center pt-10">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
+                <button
+                type="button"
+                (click)="store()"
+                class="btn btn-primary"
+                data-kt-users-modal-action="submit"
+                >
+                <span class="indicator-label">Registrar</span>
+                <span
+                    class="spinner-border spinner-border-sm align-middle ms-2"
+                    *ngIf="isLoading | async"
+                ></span>
+                </button>
+            </div>
+        </form>
+
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

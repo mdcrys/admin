@@ -1,0 +1,74 @@
+<div class="card shadow-sm border border-primary">
+  <div class="card-header">
+    <h3 class="card-title mb-0">Lista de Secciones del Módulo #{{ idModulo }}</h3>
+  </div>
+
+  <div class="card-body pt-3">
+    <!-- Botón para agregar indexación -->
+   <button class="btn btn-sm btn-success" type="button" (click)="crearIndexacion({ id: idModulo })">
+  <i class="fas fa-plus me-2"></i> Agregar Indexación
+</button>
+
+
+    <hr>
+   
+  </div>
+
+  
+</div>
+<div *ngIf="listaTitulos.length > 0" class="card shadow-sm border border-primary mt-3 p-3">
+  <div class="d-flex flex-wrap gap-3 justify-content-start">
+    <div *ngFor="let titulo of listaTitulos; let i = index" class="d-flex align-items-center" style="gap: 4px;">
+      <label [for]="'input-' + i" class="form-label mb-0" style="min-width: auto; margin-right: 4px;">{{ titulo }}:</label>
+      <input 
+        type="text" 
+        [id]="'input-' + i" 
+        class="form-control"
+        [(ngModel)]="valoresInputs[i]" 
+        placeholder="..." 
+        style="max-width: 160px; min-width: 120px;"
+      />
+    </div>
+  </div>
+
+  <!-- Botón de búsqueda centrado -->
+  <div class="d-flex justify-content-center mt-4">
+    <button class="btn btn-primary d-flex align-items-center gap-2" (click)="buscarIndexaciones()">
+      <i class="fas fa-search"></i> Buscar
+    </button>
+  </div>
+</div>
+
+
+<table class="table table-bordered mt-3" *ngIf="documentosPaginados?.data?.length > 0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Documento</th>
+      <th>Ruta archivo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let documento of documentosPaginados.data">
+      <td>{{ documento.id_indexacion }}</td>
+      <td>
+        <!-- Aquí pones el botón si quieres -->
+        <a *ngIf="documento.archivo_url" 
+           [href]="documento.archivo_url" 
+           target="_blank" 
+           class="btn btn-outline-primary btn-sm">
+          <i class="fas fa-mouse-pointer me-2"></i> Clic
+        </a>
+        <span *ngIf="!documento.archivo_url" class="text-muted">No hay enlace</span>
+      </td>
+      <td>
+        {{ documento.archivo_url }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
