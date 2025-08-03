@@ -43,15 +43,20 @@ valoresInputs: string[] = [];
    ) {}
 
   ngOnInit(): void {
-    this.obtenerCamposExtra();
     this.route.queryParams.subscribe(params => {
       this.idModulo = +params['id_modulo'] || null;
 
+      console.log('🟢 idModulo desde queryParams:', this.idModulo);
+
       if (this.idModulo) {
         this.listIndexaciones(this.idModulo);
+        this.obtenerCamposExtra(); // ✅ Ahora sí, ya con idModulo asignado correctamente
+      } else {
+        console.warn('⚠️ id_modulo no recibido en queryParams.');
       }
     });
   }
+
 
   listIndexaciones(idModulo: number) {
     this.isLoading = true;
@@ -130,10 +135,16 @@ abrirModalAgregar() {
 
 
 obtenerCamposExtra() {
+   console.log('🔎 ID del módulo recibido:', this.idModulo);
+  if (this.idModulo === null) {
+    console.error('idModulo es null');
+    return;
+  }
+
   this.isLoading = true;
   this.error = null;
 
-  this.indexacionService.obtenerCamposExtra().subscribe({
+  this.indexacionService.obtenerCamposExtra({ idModulo: this.idModulo }).subscribe({
     next: (resp: any) => {
       const registros = resp.campos_extra || [];
 
@@ -145,17 +156,15 @@ obtenerCamposExtra() {
         this.todosLosTitulos = titulos.join(', ');
         this.listaTitulos = titulos;
         this.valoresInputs = new Array(this.listaTitulos.length).fill('');
-
         console.log('Títulos extraídos:', this.todosLosTitulos);
-        this.cdr.detectChanges();
       } else {
         this.todosLosTitulos = '';
         this.listaTitulos = [];
         this.valoresInputs = [];
-        this.cdr.detectChanges();
       }
-    },
 
+      this.cdr.detectChanges();
+    },
     error: (err) => {
       console.error('Error al obtener campos_extra', err);
       this.error = 'No se pudieron cargar los campos.';
@@ -163,13 +172,13 @@ obtenerCamposExtra() {
       this.listaTitulos = [];
       this.valoresInputs = [];
     },
-
     complete: () => {
       this.isLoading = false;
       console.log('Llamada a obtenerCamposExtra completada.');
     }
   });
 }
+
 
 
 buscarIndexaciones(page = 1): void {
@@ -184,7 +193,7 @@ buscarIndexaciones(page = 1): void {
   this.indexacionService.listIndexacionesBusqueda(page, filtros).subscribe({
   next: (resp: any) => {
     this.documentosPaginados = resp.documentos || { data: [] };
-this.cdr.detectChanges();
+    this.cdr.detectChanges();
     this.currentPage = this.documentosPaginados.current_page;
     this.totalPages = this.documentosPaginados.last_page;
 

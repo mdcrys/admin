@@ -76,7 +76,20 @@ export class IndexacionService {
 
   const url = `${URL_SERVICIOS}/indexaciones/indexbusqueda?page=${page}`;
   return this.http.post(url, filtros, { headers });
-}
+    }
+
+
+
+    
+    prueba(data: any): Observable<any> {
+      const headers = new HttpHeaders({
+        'Authorization': 'Bearer ' + this.authservice.token
+      });
+
+      const URL = `${URL_SERVICIOS}/prueba`;
+
+      return this.http.post(URL, data, { headers });
+    }
 
 
 
