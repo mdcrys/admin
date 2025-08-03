@@ -155,10 +155,7 @@ export const environment = {
       'published': false,
       'thumbnail': './assets/media/demos/demo20.png'
     },
-  },/*
-  URL_BACKEND: 'http://api-doc.sisgesdoc.com/',
-  URL_SERVICIOS: 'http://api-doc.sisgesdoc.com/api',
-  URL_FRONTED: 'http://doc.sisgesdoc.com',*/
+  },
  URL_BACKEND: 'https://api-doc.sisgesdoc.com/',
 URL_SERVICIOS: 'https://api-doc.sisgesdoc.com/api',
 URL_FRONTED: 'https://doc.sisgesdoc.com',
