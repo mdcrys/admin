@@ -146,6 +146,7 @@ obtenerCamposExtra() {
 
   this.indexacionService.obtenerCamposExtra({ idModulo: this.idModulo }).subscribe({
     next: (resp: any) => {
+       console.log('Respuesta completa de la API:', resp);
       const registros = resp.campos_extra || [];
       console.log('Datos recibidos de campos_extra:', registros);
 
