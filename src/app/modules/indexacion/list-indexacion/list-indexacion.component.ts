@@ -135,7 +135,7 @@ abrirModalAgregar() {
 
 
 obtenerCamposExtra() {
-   console.log('🔎 ID del módulo recibido:', this.idModulo);
+  console.log('🔎 ID del módulo recibido:', this.idModulo);
   if (this.idModulo === null) {
     console.error('idModulo es null');
     return;
@@ -147,16 +147,15 @@ obtenerCamposExtra() {
   this.indexacionService.obtenerCamposExtra({ idModulo: this.idModulo }).subscribe({
     next: (resp: any) => {
       const registros = resp.campos_extra || [];
+      console.log('Datos recibidos de campos_extra:', registros);
 
-      if (registros.length > 0) { //prueba 
-        const titulos = registros
-          .flatMap((registro: any) => registro.campos_extra || [])
-          .map((campo: any) => campo.titulo);
+      if (registros.length > 0) {
+        const titulos = registros.map((campo: any) => campo.titulo);
 
         this.todosLosTitulos = titulos.join(', ');
         this.listaTitulos = titulos;
         this.valoresInputs = new Array(this.listaTitulos.length).fill('');
-        console.log('Títulos extraídos:', this.todosLosTitulos);
+        console.log('Títulos extraídos HOY:', this.todosLosTitulos);
       } else {
         this.todosLosTitulos = '';
         this.listaTitulos = [];
@@ -174,10 +173,11 @@ obtenerCamposExtra() {
     },
     complete: () => {
       this.isLoading = false;
-      console.log('Llamada a obtenerCamposExtra completada.');
+      console.log('Llamada a obtenerCamposExtra completada .');
     }
   });
 }
+
 
 
 
