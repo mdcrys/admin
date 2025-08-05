@@ -157,12 +157,9 @@ export const environment = {
     },
   },
   
-   URL_BACKEND: 'http://api-doc.sisgesdoc.com/',
-URL_SERVICIOS: 'http://api-doc.sisgesdoc.com/api',
-URL_FRONTED: 'http://doc.sisgesdoc.com',
- /* URL_BACKEND: 'https://api-doc.sisgesdoc.com/',
+    URL_BACKEND: 'https://api-doc.sisgesdoc.com/',
 URL_SERVICIOS: 'https://api-doc.sisgesdoc.com/api',
-URL_FRONTED: 'https://doc.sisgesdoc.com',*/
+URL_FRONTED: 'https://doc.sisgesdoc.com',
 
 };
 
