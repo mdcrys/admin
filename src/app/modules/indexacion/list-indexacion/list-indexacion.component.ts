@@ -145,9 +145,31 @@ obtenerCamposExtra() {
   this.error = null;
 
   this.indexacionService.obtenerCamposExtra({ idModulo: this.idModulo }).subscribe({
- next: (resp: any) => {
-  console.log('✅ Respuesta completa del backend:', resp);
-},
+  next: (resp: any) => {
+    console.log('✅ RESPUESTA COMPLETA:', resp);
+    if (!resp || !resp.campos_extra) {
+      console.warn('❌ campos_extra no está presente en la respuesta');
+    } else {
+      console.log('📦 campos_extra recibido:', resp.campos_extra);
+    }
+
+    const registros = resp.campos_extra || [];
+
+    if (registros.length > 0) {
+      const titulos = registros.map((campo: any) => campo.titulo);
+      this.todosLosTitulos = titulos.join(', ');
+      this.listaTitulos = titulos;
+      this.valoresInputs = new Array(this.listaTitulos.length).fill('');
+      console.log('📝 Títulos extraídos:', this.todosLosTitulos);
+    } else {
+      console.warn('⚠️ registros está vacío, no hay títulos');
+      this.todosLosTitulos = '';
+      this.listaTitulos = [];
+      this.valoresInputs = [];
+    }
+
+    this.cdr.detectChanges();
+  },
   error: (err) => {
     console.error('❌ Error al obtener campos_extra:', err);
     this.todosLosTitulos = '';
