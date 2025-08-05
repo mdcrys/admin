@@ -148,7 +148,7 @@ obtenerCamposExtra() {
     next: (resp: any) => {
       const registros = resp.campos_extra || [];
 
-      if (registros.length > 0) {
+      if (registros.length > 0) { //prueba 
         const titulos = registros
           .flatMap((registro: any) => registro.campos_extra || [])
           .map((campo: any) => campo.titulo);
