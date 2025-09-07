@@ -266,11 +266,11 @@ export const SIDEBAR:any = [
       ]
     },
     {
-      'name': 'Kardex',
+      'name': 'Ocr',
       'permisos': [
         {
           name:'Disponible',
-          permiso: 'kardex',
+          permiso: 'Ocr',
         },
       ]
     },

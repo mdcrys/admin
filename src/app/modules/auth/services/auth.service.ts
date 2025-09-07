@@ -25,6 +25,29 @@ export class AuthService implements OnDestroy {
   currentUserSubject: BehaviorSubject<UserType>;
   isLoadingSubject: BehaviorSubject<boolean>;
 
+  private _id_empresaSubject = new BehaviorSubject<number | null>(null);
+  id_empresa$ = this._id_empresaSubject.asObservable();
+
+  set id_empresa(value: number | null) {
+    this._id_empresaSubject.next(value);
+  }
+
+  get id_empresa(): number | null {
+    return this._id_empresaSubject.value;
+  }
+
+
+private _id_usuarioSubject = new BehaviorSubject<string | null>(null);
+id_usuario$ = this._id_usuarioSubject.asObservable();
+
+set id_usuario(value: string | null) {
+  this._id_usuarioSubject.next(value);
+}
+
+get id_usuario(): string | null {
+  return this._id_usuarioSubject.value;
+}
+
   get currentUserValue(): UserType {
     return this.currentUserSubject.value;
   }
@@ -135,6 +158,7 @@ export class AuthService implements OnDestroy {
       }
       this.token = localStorage.getItem('token');
       this.user  = JSON.parse(lsValue);
+
       const authData = this.user;
       return authData;
     } catch (error) {

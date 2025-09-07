@@ -1,0 +1,6 @@
+<input type="file" accept=".pdf" (change)="onFileSelected($event)">
+<button (click)="subirYDesunir()">Subir y Desunir PDF</button>
+
+<div *ngIf="isLoading">
+  <p>Cargando... {{progress}}%</p>
+</div>

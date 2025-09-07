@@ -21,6 +21,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 export class CreateIndexacionComponent implements AfterViewInit {
   @ViewChild('textLayer', { static: false }) textLayer!: ElementRef<HTMLDivElement>;
 
+
  @ViewChild('pdfCanvasTemp') pdfCanvasTemp!: ElementRef<HTMLCanvasElement>;
   @Input() idModulo!: number;
   campos: any[] = [];
@@ -53,6 +54,16 @@ pageCountTemp: number = 0;
   pageCount: number = 0;
   scale: number = 1.5;
   ctx!: CanvasRenderingContext2D;
+
+
+
+imagenesPDF: string[] = []; // las imágenes en base64 que generas del PDF
+selectedArea: { x: number; y: number; width: number; height: number } | null = null;
+isDrawing = false;
+startX = 0;
+startY = 0;
+selectedPage: number | null = null;
+recorte: string | null = null; // aquí guardamos la imagen recortada
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -218,65 +229,10 @@ async renderPage(num: number) {
     this.renderPage(this.pageNum);
   }
 
-// Función que llamas para procesar los archivos y cargar URLs
-procesarArchivos() {
-  if (!this.idModulo || !this.archivoSeleccionadoTemp) {
-    this.toast.warning('Debe seleccionar archivos y tener un módulo válido');
-    return;
-  }
-
-  this.archivosProcesados = [];
-  this.indiceActual = 0;
-  this.urlsSanitizadas = [];
-
-  const archivo = this.archivoSeleccionadoTemp;
-
-  Swal.fire({
-    title: `Procesando OCR para archivo: ${archivo.name}`,
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
-
-  const formData = new FormData();
-  formData.append('modulo_id', this.idModulo.toString());
-  formData.append('archivos[]', archivo);
-
-  this.seccionesService.subirArchivos(formData).toPromise()
-    .then((resp: any) => {
-      if (resp.archivos && Array.isArray(resp.archivos)) {
-        this.archivosProcesados.push(...resp.archivos);
-
-        this.urlsSanitizadas = resp.archivos.map((a: any) =>
-          this.sanitizer.bypassSecurityTrustResourceUrl(a.url) as unknown as string
-        );
-
-        if (resp.archivos.length > 0) {
-          this.loadPdf(resp.archivos[0].url);
-        }
-      }
-      Swal.close();
-      this.toast.success('Archivo procesado correctamente');
-      this.indiceActual = 0;
-    })
-    .catch((error) => {
-      Swal.close();
-      this.toast.error('Error al subir el archivo ' + archivo.name);
-      console.error(error);
-    });
-}
 
 
 
-  // Para cambiar entre PDFs procesados
-  verPdfPorIndice(indice: number) {
-    if (indice < 0 || indice >= this.archivosProcesados.length) {
-      this.toast.warning('Índice inválido');
-      return;
-    }
-    this.indiceActual = indice;
-    this.pageNum = 1;
-    this.loadPdf(this.archivosProcesados[indice].url);
-  }
+
 
   close() {
     this.activeModal.close();
@@ -496,6 +452,129 @@ seleccionarTexto() {
     this.campos[this.inputSeleccionadoIndex].valor = this.textoSeleccionado;
     this.showMenu = false;
   }
+}
+
+
+
+
+
+
+// Convertir PDF a imágenes
+  async hacerOCR() {
+    if (!this.archivoSeleccionadoTemp) {
+      alert("Por favor, selecciona un archivo PDF antes de continuar.");
+      return;
+    }
+
+    const fileReader = new FileReader();
+    fileReader.onload = async (e: any) => {
+      const typedarray = new Uint8Array(e.target.result);
+      const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+      this.imagenesPDF = [];
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d')!;
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+        const imageData = canvas.toDataURL('image/png');
+        this.imagenesPDF.push(imageData);
+      }
+
+      setTimeout(() => this.renderizarCanvas(), 0);
+      alert(`PDF convertido a ${this.imagenesPDF.length} imagen(es) PNG.`);
+    };
+
+    fileReader.readAsArrayBuffer(this.archivoSeleccionadoTemp);
+  }
+
+  // Dibujar imágenes en canvas
+  renderizarCanvas() {
+    this.imagenesPDF.forEach((imgSrc, i) => {
+      const canvas = document.querySelectorAll('canvas')[i] as HTMLCanvasElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+      img.src = imgSrc;
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+      };
+    });
+  }
+
+
+  onMouseDown(event: MouseEvent, pageIndex: number) {
+  this.isDrawing = true;
+  this.startX = event.offsetX;
+  this.startY = event.offsetY;
+  this.selectedPage = pageIndex;
+  this.recorte = null;
+}
+
+onMouseMove(event: MouseEvent, pageIndex: number) {
+  if (!this.isDrawing || this.selectedPage !== pageIndex) return;
+
+  const currentX = event.offsetX;
+  const currentY = event.offsetY;
+  const width = currentX - this.startX;
+  const height = currentY - this.startY;
+
+  const canvas = event.target as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const img = new Image();
+  img.src = this.imagenesPDF[pageIndex];
+  img.onload = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // rectángulo transparente
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(this.startX, this.startY, width, height);
+  };
+}
+
+onMouseUp(event: MouseEvent, pageIndex: number) {
+  this.isDrawing = false;
+
+  const endX = event.offsetX;
+  const endY = event.offsetY;
+  const width = endX - this.startX;
+  const height = endY - this.startY;
+
+  const canvas = event.target as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+
+  // crear un canvas temporal con el recorte
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = Math.abs(width);
+  tempCanvas.height = Math.abs(height);
+  const tempCtx = tempCanvas.getContext('2d')!;
+
+  // dibujar la parte seleccionada
+  tempCtx.drawImage(
+    canvas,
+    this.startX,
+    this.startY,
+    width,
+    height,
+    0,
+    0,
+    Math.abs(width),
+    Math.abs(height)
+  );
+
+  // convertir a base64 para mostrar
+  this.recorte = tempCanvas.toDataURL('image/png');
+
+  console.log("Recorte generado:", this.recorte);
 }
 
 

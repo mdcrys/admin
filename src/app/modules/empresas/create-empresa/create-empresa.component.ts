@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { EmpresaService } from '../service/empresa.service';
+import { SIDEBAR } from 'src/app/config/config'; // <-- Ajusta la ruta correcta
 
 @Component({
   selector: 'app-create-empresa',
@@ -29,12 +30,33 @@ export class CreateEmpresaComponent {
   LOGO_EMPRESA: any;
   LOGO_PREVISUALIZA: any;
 
+
+  SIDEBAR: any = SIDEBAR; // <-- Aquí lo expones al template
+  permisions: any = [];
+
+  mostrarPermisos: boolean = false;
+
+
   constructor(
     public modal: NgbActiveModal,
     public empresaService: EmpresaService,
     public toast: ToastrService,
   ) {}
 
+
+  togglePermisos() {
+  this.mostrarPermisos = !this.mostrarPermisos;
+}
+
+  addPermission(permiso: string) {
+    let INDEX = this.permisions.findIndex((perm: string) => perm == permiso);
+    if (INDEX != -1) {
+      this.permisions.splice(INDEX, 1);
+    } else {
+      this.permisions.push(permiso);
+    }
+    console.log(this.permisions);
+  }
   ngOnInit(): void {}
 
   processFile($event: any) {
@@ -95,6 +117,9 @@ export class CreateEmpresaComponent {
   formData.append("admin_apellido", this.admin_apellido);
   formData.append("admin_correo", this.admin_correo);
   formData.append("admin_password", this.admin_password);
+
+  // Permisos seleccionados
+  formData.append("permisos", JSON.stringify(this.permisions));
 
   this.empresaService.registerEmpresa(formData).subscribe((resp: any) => {
     if (resp.message === 403) {

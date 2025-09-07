@@ -182,6 +182,13 @@ const Routing: Routes = [
       (m) => m.IndexacionModule
     ),
 },
+{
+  path: 'masivo',
+  loadChildren: () =>
+    import('../modules/masivo/masivo.module').then(
+      (m) => m.MasivoModule
+    ),
+},
 
   {
     path: '',

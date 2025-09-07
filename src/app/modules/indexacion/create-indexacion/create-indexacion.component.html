@@ -57,64 +57,53 @@
       </div>
 
       <!-- Columna 2 -->
-      <div class="col-md-6">
-        <div class="fv-row mb-5">
-          <label class="form-label">Subir documentos</label>
-          <input
-            type="file"
-            class="form-control"
-            (change)="onFileSelectedtemp($event)"
-            multiple
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-          />
-        </div>
-        <!-- NUEVO VISOR: Solo para archivos recién cargados -->
-        <div *ngIf="archivoSeleccionadoTemp" style="margin-top: 2rem;">
-          <h5>Vista previa del archivo cargado</h5>
+<!-- Columna 2 -->
+<div class="col-md-6">
+  <div class="fv-row mb-5">
+    <label class="form-label">Subir documentos (solo PDF)</label>
+    <input
+      type="file"
+      class="form-control"
+      (change)="onFileSelectedtemp($event)"
+      accept=".pdf"
+    />
+  </div>
 
-          <div style="position: relative; width: 100%; max-width: 800px;">
-            <canvas #pdfCanvasTemp style="border: 1px solid black; width: 100%;"></canvas>
-            
-            <div #textLayerTemp class="textLayer"></div>
-          </div>
+  <div class="mt-3">
+    <button class="btn btn-primary" (click)="hacerOCR()">Deseo hacer OCR</button>
+  </div>
 
-          <div style="margin-top: 1rem;">
-            <button (click)="prevPageTemp()" [disabled]="pageNumTemp <= 1">Anterior</button>
-            <button (click)="nextPageTemp()" [disabled]="pageNumTemp >= pageCountTemp">Siguiente</button>
-            <span>Página {{pageNumTemp}} / {{pageCountTemp}}</span>
-          </div>
-        </div>
+<!-- VISOR DE IMÁGENES -->
+<div class="mt-3" *ngIf="imagenesPDF.length > 0">
+  <h5>Visor de páginas del PDF</h5>
+
+  <div *ngFor="let img of imagenesPDF; let i = index" style="margin-bottom: 1rem;">
+    <p>Página {{ i + 1 }}</p>
+
+    <canvas
+      #canvas
+      width="600"
+      height="800"
+      style="border:1px solid #ccc;"
+      (mousedown)="onMouseDown($event, i)"
+      (mousemove)="onMouseMove($event, i)"
+      (mouseup)="onMouseUp($event, i)"
+    ></canvas>
+
+    <!-- aquí mostramos la parte seleccionada -->
+    <div *ngIf="recorte && selectedPage === i" style="margin-top: 10px;">
+      <p>Fragmento seleccionado:</p>
+      <img [src]="recorte" style="border:1px solid green; max-width:200px;" />
+    </div>
+  </div>
+</div>
 
 
-        <div class="mt-2" *ngIf="archivoSeleccionadoTemp">
-          <label class="form-label">Archivo seleccionado:</label>
-          <div>{{ archivoSeleccionadoTemp.name }}</div>
 
-          <div class="mt-3">
-            <button class="btn btn-primary" (click)="procesarArchivos()">Procesar</button>
-          </div>
-        </div>
+</div>
 
 
 
-        <div style="position: relative; width: 100%; max-width: 800px;">
-          <canvas #pdfCanvas style="border: 1px solid black; width: 100%;"></canvas>
-          <div #textLayer class="textLayer"></div>
-        </div>
-
-        <div style="margin-top: 1rem;">
-          <button (click)="prevPage()" [disabled]="pageNum <= 1">Anterior página</button>
-          <button (click)="nextPage()" [disabled]="pageNum >= pageCount">Siguiente página</button>
-          <span>Página {{pageNum}} / {{pageCount}}</span>
-        </div>
-
-        <div *ngIf="archivosProcesados.length > 1" style="margin-top: 1rem;">
-          <label>Ver otro PDF:</label>
-          <button *ngFor="let archivo of archivosProcesados; let i = index" (click)="verPdfPorIndice(i)">
-            {{ archivo.nombre }}
-          </button>
-        </div>
-      </div>
   </div>
 
       <!-- Botones -->

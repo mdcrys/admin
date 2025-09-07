@@ -199,10 +199,53 @@
             <!-- Línea separadora -->
             <hr class="my-10 border border-primary border-2 opacity-50" />
 
-            <!-- Título -->
-            <h4 class="fw-bolder mb-5 text-center text-primary">Asignar Permisos</h4>
-            
+            <!-- Título con click para desplegar -->
+            <h4 
+            class="fw-bolder mb-5 text-center text-primary" 
+            style="cursor: pointer;" 
+            (click)="togglePermisos()">
+            Asignar Permisos
+            <span [ngClass]="{'rotate-180': mostrarPermisos}" style="transition: 0.3s;">
+                ▼
+            </span>
+            </h4>
 
+            <!-- Línea separadora -->
+            <hr class="mb-4">
+
+            <!-- Contenido de permisos como acordeón -->
+            <div class="fv-row mb-7" *ngIf="mostrarPermisos">
+                <label class="required fw-bold fs-6 mb-2">Selecciona sus permisos: </label>
+
+                <div class="table-responsive w-100">
+                  <div class="row g-3">
+  <div class="col-md-4" *ngFor="let PERMISSION of SIDEBAR">
+    <div class="card h-100 shadow-sm" style="font-size: 0.9rem; border-radius: 0.5rem;">
+      <div class="card-header bg-primary text-white fw-bold" style="font-size: 1rem; padding: 0.5rem 1rem;">
+        {{ PERMISSION.name }}
+      </div>
+      <div class="card-body d-flex flex-column gap-2" style="padding: 0.5rem 1rem; background-color: #f8f9fa;">
+        <ng-container *ngFor="let permiso of PERMISSION.permisos">
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="permiso-{{PERMISSION.name}}-{{permiso.permiso}}"
+              (click)="addPermission(permiso.permiso)">
+            <label class="form-check-label" [for]="'permiso-'+PERMISSION.name+'-'+permiso.permiso" style="margin-left: 0.25rem;">
+              {{ permiso.name }}
+            </label>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+                </div>
+            </div>
 
 
             <!-- Botones -->

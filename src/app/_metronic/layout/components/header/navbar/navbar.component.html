@@ -2,19 +2,17 @@
 <div *ngIf="user?.id === 1 || user?.role_name === 'Super-Admin'" class="app-navbar-item " [ngClass]="itemClass" style="margin-right: 350px;">
   <label class="fw-bold me-2">Seleccionar:</label>
 
-  <select class="form-select ms-3" [(ngModel)]="selectedEntidad">
-    <option value="" disabled [selected]="!selectedEntidad">Seleccione una empresa</option>
+<select class="form-select ms-3" [(ngModel)]="selectedEntidad" (change)="onChangeEntidad()" *ngIf="user">
+  <option value="" disabled [selected]="!selectedEntidad">Seleccione una empresa</option>
+  <option [value]="'usuario_' + user.id">{{ user.full_name }}</option>
+  <option *ngFor="let empresa of empresas" [value]="'empresa_' + empresa.id">
+    {{ empresa.nombre_empresa }}
+  </option>
+</select>
 
-    <!-- Usuario -->
-    <option [value]="'usuario_' + user.id">
-      {{ user.full_name }}
-    </option>
 
-    <!-- Empresas -->
-    <option *ngFor="let empresa of empresas" [value]="'empresa_' + empresa.id_empresa">
-      {{ empresa.nombre_empresa }}
-    </option>
-  </select>
+
+
 </div>
 
 <!-- ❗ Mensaje si NO es superadmin -->

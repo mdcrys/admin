@@ -34,9 +34,19 @@ export class NavbarComponent implements OnInit {
     this.user = this.authService.user;
 
      // ✅ Doble condición: si es id 1 o el rol es Super-Admin
-  if (this.user?.id === 1 || this.user?.role_name === 'Super-Admin') {
-    this.selectedEntidad = 'usuario_' + this.user.id;
-  }
+      if (this.user?.id === 1 || this.user?.role_name === 'Super-Admin') {
+        this.selectedEntidad = 'usuario_' + this.user.id;
+
+        // Para ver el valor completo que se guarda en selectedEntidad
+        console.log('Valor de selectedEntidad:', this.selectedEntidad);
+
+        // Para ver solo el ID numérico del usuario
+        console.log('ID numérico del Super Admin:', this.user.id);
+
+        // Para ver el role_name
+        console.log('Role del usuario:', this.user.role_name);
+      }
+
     // Siempre cargar empresas sin importar quién es el usuario
     this.loadEmpresas();
   }
@@ -48,15 +58,16 @@ export class NavbarComponent implements OnInit {
       this.empresasCargadas = true;
 
       if (this.user?.id_empresa) {
-        const empresa = this.empresas.find(e => e.id === this.user.id_empresa);
-        if (empresa) {
-          this.empresaNombreUsuario = empresa.nombre_empresa;
-          console.log('Empresa encontrada para usuario:', empresa.nombre_empresa);
-        } else {
-          this.empresaNombreUsuario = 'Empresa no asignada';
-          console.log('No se encontró empresa con id:', this.user.id_empresa);
-        }
+      const empresa = this.empresas.find(e => e.id === this.user.id_empresa);
+      if (empresa) {
+        this.empresaNombreUsuario = empresa.nombre_empresa;
+        console.log('Empresa encontrada para usuario:', empresa.nombre_empresa);
       } else {
+        this.empresaNombreUsuario = 'Empresa no asignada';
+        console.log('No se encontró empresa con id:', this.user.id_empresa);
+      }
+    }
+    else {
         this.empresaNombreUsuario = 'Empresa no asignada';
         console.log('Usuario no tiene id_empresa asignado');
       }
@@ -70,6 +81,27 @@ export class NavbarComponent implements OnInit {
     }
   });
 }
+
+onChangeEntidad() {
+  if (!this.selectedEntidad) return;
+
+  // Si selecciona una empresa
+  if (this.selectedEntidad.startsWith('empresa_')) {
+    const idEmpresa = parseInt(this.selectedEntidad.replace('empresa_', ''), 10);
+    this.authService.id_empresa = idEmpresa; // actualizar BehaviorSubject
+    console.log('ID de empresa seleccionado en Navbar:', idEmpresa);
+  } 
+
+  // Si selecciona un usuario (super admin)
+  else if (this.selectedEntidad.startsWith('usuario_')) {
+    const idUsuario = parseInt(this.selectedEntidad.replace('usuario_', ''), 10);
+    // Aquí solo imprimimos role_name, no enviamos al sidebar
+    this.authService.id_usuario = this.user.role_name;
+    console.log('Role del usuario seleccionado:', this.user.role_name);
+    console.log('ID numérico del Super Admin:', idUsuario);
+  }
+}
+
 
 
 }
